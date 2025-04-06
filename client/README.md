@@ -67,7 +67,7 @@ The client creates three output files:
 ### Example
 
 ```
-python email_validator_client.py emails.txt results/output --servers 192.168.1.10:50051,192.168.1.11:50051,192.168.1.12:50051 --max-workers 12 --batch-size 200
+python client/email_validator_client.py email_addresses_1.txt results/output --servers 198.7.114.192:50051,198.7.114.193:50051,198.7.114.196:50051 --max-workers 12 --batch-size 200
 ```
 
 ## License

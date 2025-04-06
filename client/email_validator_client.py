@@ -250,19 +250,16 @@ class ValidationClient:
         try:
             # Start bidirectional streaming
             start_time = time.time()
-            stream = stub.ValidateEmailStream(timeout=self.timeout)
             
-            # Send all emails
-            for email in emails:
-                if self.shutdown_event.is_set():
-                    stream.cancel()
-                    break
-                    
-                request = email_validator_pb2.EmailRequest(email=email)
-                stream.send(request)
+            # Create a request generator function
+            def request_iterator():
+                for email in emails:
+                    if self.shutdown_event.is_set():
+                        return
+                    yield email_validator_pb2.EmailRequest(email=email)
             
-            # Close sending
-            stream.done_writing()
+            # Pass the request iterator to the streaming call
+            stream = stub.ValidateEmailStream(request_iterator(), timeout=self.timeout)
             
             # Receive all responses
             try:
