@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package email_validator;
+
+option go_package = "github.com/megactek/email-validator/proto";
+
+import "google/protobuf/empty.proto";
+
+// Email validation service definition
+service EmailValidator {
+  // Validate a single email
+  rpc ValidateEmail(EmailRequest) returns (ValidationResult) {}
+  
+  // Bidirectional streaming for validating multiple emails
+  rpc ValidateEmailStream(stream EmailRequest) returns (stream ValidationResult) {}
+  
+  // Get current validation statistics
+  rpc GetStats(google.protobuf.Empty) returns (StatsResponse) {}
+}
+
+// Email validation request
+message EmailRequest {
+  string email = 1;
+}
+
+// Validation result
+message ValidationResult {
+  string email = 1;
+  ValidationStatus status = 2;
+  string reason = 3;
+}
+
+// Validation status enum
+enum ValidationStatus {
+  UNKNOWN = 0;
+  VALID = 1;
+  INVALID = 2;
+  ERROR = 3;
+  DISPOSABLE = 4;
+}
+
+// Statistics response
+message StatsResponse {
+  int64 total_processed = 1;
+  int64 valid = 2;
+  int64 invalid = 3;
+  int64 unknown = 4;
+  int64 error = 5;
+  int64 disposable = 6;
+} 

@@ -1,0 +1,10 @@
+user1@gmail.com
+user2@yahoo.com
+user3@hotmail.com
+nonexistent123456@gmail.com
+test@mailinator.com
+user4@outlook.com
+invalid@email
+user5@aol.com
+test@temp-mail.org
+user6@icloud.com 
