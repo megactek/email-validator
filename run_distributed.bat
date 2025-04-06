@@ -99,11 +99,17 @@ for /l %%i in (0,1,%SERVER_COUNT%) do (
             
             echo Starting client for server !SERVER! with chunk !CHUNK!
             
-            REM Run in background using start command - Fixed command syntax
-            start /b python client/email_validator_client.py "!CHUNK!" "!OUTPUT_PREFIX!" --servers "!SERVER!" --max-workers "%WORKERS_PER_SERVER%" --batch-size "%BATCH_SIZE%" --retry-limit 3 --timeout 30 > "%OUTPUT_DIR%\log_!CHUNK_FILE!.log" 2>&1
+            REM Create a simplified command file for this specific job
+            set "CMD_FILE=%TEMP%\run_client_%%i.cmd"
+            echo @echo off > "!CMD_FILE!"
+            echo cd /d "%CD%" >> "!CMD_FILE!"
+            echo python client\email_validator_client.py "!CHUNK!" "!OUTPUT_PREFIX!" --servers "!SERVER!" --max-workers %WORKERS_PER_SERVER% --batch-size %BATCH_SIZE% --retry-limit 3 --timeout 30 >> "!CMD_FILE!"
             
-            REM Store the process ID
-            for /f "tokens=2" %%p in ('tasklist /fi "imagename eq python.exe" /nh ^| findstr "python"') do (
+            REM Run the command file in background
+            start /b cmd /c "!CMD_FILE!" > "%OUTPUT_DIR%\log_!CHUNK_FILE!.log" 2>&1
+            
+            REM Store the process ID using a more reliable method
+            for /f "tokens=2" %%p in ('tasklist /fi "imagename eq cmd.exe" /nh ^| findstr "cmd" ^| findstr /v "findstr"') do (
                 echo %%p > "%OUTPUT_DIR%\pid_!CHUNK_FILE!.pid"
                 goto :done_%%i
             )
