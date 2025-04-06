@@ -99,13 +99,8 @@ for /l %%i in (0,1,%SERVER_COUNT%) do (
             
             echo Starting client for server !SERVER! with chunk !CHUNK!
             
-            REM Run in background using start command
-            start /b cmd /c python client\email_validator_client.py "!CHUNK!" "!OUTPUT_PREFIX!" ^
-                --servers "!SERVER!" ^
-                --max-workers "%WORKERS_PER_SERVER%" ^
-                --batch-size "%BATCH_SIZE%" ^
-                --retry-limit 3 ^
-                --timeout 30 > "%OUTPUT_DIR%\log_!CHUNK_FILE!.log" 2>&1
+            REM Run in background using start command - Fixed command syntax
+            start /b python client/email_validator_client.py "!CHUNK!" "!OUTPUT_PREFIX!" --servers "!SERVER!" --max-workers "%WORKERS_PER_SERVER%" --batch-size "%BATCH_SIZE%" --retry-limit 3 --timeout 30 > "%OUTPUT_DIR%\log_!CHUNK_FILE!.log" 2>&1
             
             REM Store the process ID
             for /f "tokens=2" %%p in ('tasklist /fi "imagename eq python.exe" /nh ^| findstr "python"') do (
